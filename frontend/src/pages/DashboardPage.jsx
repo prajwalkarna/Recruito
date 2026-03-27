@@ -1,28 +1,23 @@
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import '../styles/Auth.css';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/useAuth";
 
 export default function DashboardPage() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  useEffect(() => {
+    if (user) {
+      // Redirect based on role
+      if (user.role === "employer") {
+        navigate("/employer/dashboard", { replace: true });
+      } else if (user.role === "freelancer") {
+        navigate("/freelancer/dashboard", { replace: true });
+      } else if (user.role === "admin") {
+        navigate("/admin/jobs", { replace: true });
+      }
+    }
+  }, [user, navigate]);
 
-  return (
-    <div className="dashboard">
-      <div className="dashboard-card">
-        <h2>Welcome, {user?.name}!</h2>
-        <div className="user-info">
-          <p>Email: <span>{user?.email}</span></p>
-          <p>Role: <span className="role-badge">{user?.role}</span></p>
-        </div>
-        <button className="logout-btn" onClick={handleLogout}>
-          Log out
-        </button>
-      </div>
-    </div>
-  );
+  return <div className="loading">Redirecting...</div>;
 }

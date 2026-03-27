@@ -11,8 +11,8 @@ const getAuthHeaders = () => {
 };
 
 const handleResponse = async (res) => {
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Something went wrong');
+    const data = await res.json().catch(() => ({})); // Handle cases where res is not JSON (e.g., 500 HTML errors from multer)
+    if (!res.ok) throw new Error(data.message || data.error || 'Something went wrong on the server');
     return data;
 };
 
@@ -41,6 +41,20 @@ export const setDefaultCV = (id) =>
         method: 'PATCH',
         headers: getAuthHeaders(),
     }).then(handleResponse);
+
+export const uploadCVFile = (cvId, file) => {
+    const formData = new FormData();
+    formData.append('cvFile', file);
+
+    const token = localStorage.getItem('token');
+    return fetch(`${BASE_URL}/upload/cv/${cvId}`, {
+        method: 'POST',
+        headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: formData,
+    }).then(handleResponse);
+};
 
 export const deleteCV = (id) =>
     fetch(`${BASE_URL}/cvs/${id}`, {

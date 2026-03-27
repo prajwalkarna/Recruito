@@ -1,4 +1,3 @@
-// src/pages/freelancer/CreateCVPage.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CVBuilder from '../../components/cv/CVBuilder';
@@ -10,23 +9,20 @@ export default function CreateCVPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [preview, setPreview] = useState(null); // holds data to preview
+    const [preview, setPreview] = useState(null);
     const [showPreview, setShowPreview] = useState(false);
 
     const handleSubmit = async (cvData) => {
-        // Show preview first
         if (!showPreview) {
             setPreview(cvData);
             setShowPreview(true);
             return;
         }
-
-        // Save
         setLoading(true);
         setError('');
         try {
             await createCV(cvData);
-            setSuccess('CV saved! Redirecting...');
+            setSuccess('CV Protocol Saved. Redirecting to Documents Repository...');
             setTimeout(() => navigate('/freelancer/my-cvs'), 1500);
         } catch (err) {
             setError(err.message);
@@ -37,57 +33,77 @@ export default function CreateCVPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 py-10 px-4">
-            <div className="max-w-3xl mx-auto">
+        <div className="min-h-screen bg-background pt-24 pb-20 px-6">
+            <div className="section-container max-w-5xl mx-auto space-y-10">
+                <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div className="space-y-4">
+                        <h1 className="text-4xl md:text-5xl font-black font-headline tracking-tighter uppercase italic">
+                            Professional <span className="text-primary">Profile</span>
+                        </h1>
+                        <p className="text-on-surface-variant font-medium max-w-2xl">
+                            {showPreview 
+                                ? 'Review your professional profile before saving.' 
+                                : 'Build a high-impact resume with our structured editor.'}
+                        </p>
+                    </div>
+                </header>
 
-                {/* Header */}
-                <div className="mb-8">
-                    <button onClick={() => navigate('/freelancer/my-cvs')}
-                        className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 mb-4 transition-colors">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                        Back to My CVs
-                    </button>
-                    <h1 className="text-2xl font-bold text-gray-800">
-                        {showPreview ? 'Preview Your CV' : 'Build Your CV'}
-                    </h1>
-                    <p className="text-gray-500 text-sm mt-1">
-                        {showPreview
-                            ? 'Review your CV below. Go back to edit or confirm to save.'
-                            : 'Complete all 4 steps to create a professional CV.'}
-                    </p>
-                </div>
-
-                {/* Alerts */}
                 {error && (
-                    <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">{error}</div>
+                    <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
+                        <span className="material-symbols-outlined text-sm">report</span>
+                        {error}
+                    </div>
                 )}
                 {success && (
-                    <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">{success}</div>
+                    <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
+                        <span className="material-symbols-outlined text-sm">verified</span>
+                        {success}
+                    </div>
                 )}
 
                 {showPreview ? (
-                    <div>
-                        {/* Print/Download button */}
-                        <div className="flex gap-3 mb-4">
-                            <button onClick={() => setShowPreview(false)}
-                                className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
-                                ← Edit
+                    <div className="space-y-8 animate-in fade-in zoom-in-95 duration-500">
+                        <div className="flex flex-wrap items-center justify-between gap-4 bg-surface-container border border-outline p-6 rounded-2xl">
+                            <button 
+                                onClick={() => setShowPreview(false)} 
+                                className="px-6 py-3 bg-surface-container border border-outline rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-surface-container-high transition-all flex items-center gap-2 group"
+                            >
+                                <span className="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span> Return to Editor
                             </button>
-                            <button onClick={() => window.print()}
-                                className="border border-blue-300 text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors">
-                                🖨 Print / Save as PDF
-                            </button>
-                            <button onClick={() => handleSubmit(preview)} disabled={loading}
-                                className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors">
-                                {loading ? 'Saving...' : '✓ Confirm & Save'}
-                            </button>
+                            
+                            <div className="flex gap-4">
+                                <button 
+                                    onClick={() => window.print()} 
+                                    className="px-6 py-3 bg-surface-container border border-outline rounded-xl text-[10px] font-black uppercase tracking-widest text-on-surface hover:border-primary/50 hover:text-primary transition-all flex items-center gap-2"
+                                >
+                                    <span className="material-symbols-outlined text-sm">download</span> Local Export (PDF)
+                                </button>
+                                <button 
+                                    onClick={() => handleSubmit(preview)} 
+                                    disabled={loading} 
+                                    className="px-8 py-3 bg-primary text-on-primary rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all flex items-center gap-2 disabled:opacity-50 disabled:pointer-events-none"
+                                >
+                                    {loading ? (
+                                        <>
+                                            <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                                            Syncing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span className="material-symbols-outlined text-sm">cloud_upload</span> Save Professional Profile
+                                        </>
+                                    )}
+                                </button>
+                            </div>
                         </div>
-                        <CVPreview cv={preview} />
+                        
+                        <div className="bg-white/5 backdrop-blur-xl p-8 md:p-12 rounded-card border border-outline shadow-2xl relative overflow-hidden">
+                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-indigo-500 to-primary"></div>
+                             <CVPreview cv={preview} />
+                        </div>
                     </div>
                 ) : (
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div className="p-8 md:p-10 rounded-card border border-outline bg-surface-container">
                         <CVBuilder onSubmit={handleSubmit} loading={loading} />
                     </div>
                 )}

@@ -1,134 +1,141 @@
 // src/components/cv/CVPreview.jsx
-// Renders a full formatted CV preview.
-// Usage: <CVPreview cv={cvObject} />
+import React from 'react';
+
+const CVSection = ({ title, children, icon }) => (
+    <section className="mb-10 animate-in fade-in slide-in-from-left-4 duration-500">
+        <div className="flex items-center gap-3 mb-4 pb-2 border-b border-outline/30">
+            <span className="material-symbols-outlined text-primary text-xl">{icon}</span>
+            <h2 className="text-[12px] font-black uppercase tracking-[0.2em] text-on-surface">{title}</h2>
+        </div>
+        <div className="pl-9 space-y-6">
+            {children}
+        </div>
+    </section>
+);
 
 export default function CVPreview({ cv }) {
     if (!cv) return null;
 
-    const Section = ({ title, children }) => (
-        <div className="mb-6">
-            <h2 className="text-sm font-bold uppercase tracking-widest text-blue-700 border-b border-blue-100 pb-1 mb-3">
-                {title}
-            </h2>
-            {children}
-        </div>
-    );
-
-    const skills   = Array.isArray(cv.skills)         ? cv.skills         : [];
-    const exp      = Array.isArray(cv.experience)      ? cv.experience      : [];
-    const edu      = Array.isArray(cv.education)       ? cv.education       : [];
-    const certs    = Array.isArray(cv.certifications)  ? cv.certifications  : [];
-    const langs    = Array.isArray(cv.languages)       ? cv.languages       : [];
+    const skills = cv.skills || [];
+    const experience = cv.experience || [];
+    const education = cv.education || [];
+    const certifications = cv.certifications || [];
 
     return (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 max-w-2xl mx-auto font-sans text-gray-800 print:shadow-none print:border-none">
+        <div className="bg-white text-slate-900 min-h-[1100px] shadow-2xl rounded-[2.5rem] p-12 md:p-20 relative overflow-hidden font-body selection:bg-primary/20 selection:text-primary">
+            {/* Design Accents */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-primary via-indigo-500 to-transparent opacity-20"></div>
 
             {/* Header */}
-            <div className="mb-6 pb-4 border-b-2 border-blue-600">
-                <h1 className="text-2xl font-bold text-gray-900">{cv.full_name || 'Your Name'}</h1>
-                <div className="flex flex-wrap gap-4 mt-1 text-sm text-gray-500">
-                    {cv.email && <span>✉ {cv.email}</span>}
-                    {cv.phone && <span>📞 {cv.phone}</span>}
+            <header className="mb-16 relative">
+                <div className="space-y-4">
+                    <h1 className="text-5xl md:text-7xl font-headline font-black tracking-tighter text-slate-900 leading-none italic uppercase">
+                        {cv.full_name || 'Anonymous'}
+                    </h1>
+                    <div className="flex flex-wrap gap-x-8 gap-y-2 text-sm font-bold text-slate-500 uppercase tracking-widest">
+                        {cv.email && (
+                            <div className="flex items-center gap-2">
+                                <span className="material-symbols-outlined text-primary text-lg">mail</span>
+                                {cv.email}
+                            </div>
+                        )}
+                        {cv.phone && (
+                            <div className="flex items-center gap-2">
+                                <span className="material-symbols-outlined text-primary text-lg">call</span>
+                                {cv.phone}
+                            </div>
+                        )}
+                    </div>
+                </div>
+                {cv.summary && (
+                    <div className="mt-10 max-w-3xl">
+                        <p className="text-lg text-slate-600 font-medium leading-relaxed italic border-l-4 border-primary/20 pl-6">
+                            "{cv.summary}"
+                        </p>
+                    </div>
+                )}
+            </header>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+                <div className="lg:col-span-8 space-y-2">
+                    {/* Experience */}
+                    {experience.length > 0 && (
+                        <CVSection title="Work History" icon="work">
+                            {experience.map((exp, i) => (
+                                <div key={i} className="relative group">
+                                    <div className="absolute left-[-2.25rem] top-2 w-1.5 h-1.5 rounded-full bg-primary ring-4 ring-primary/10"></div>
+                                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-2 mb-2">
+                                        <div>
+                                            <h3 className="text-xl font-headline font-bold text-slate-900">{exp.role}</h3>
+                                            <p className="text-md font-bold text-primary italic uppercase tracking-wider">{exp.company}</p>
+                                        </div>
+                                        <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
+                                            {exp.start_date} — {exp.current ? 'PRESENT' : exp.end_date}
+                                        </div>
+                                    </div>
+                                    <p className="text-slate-600 text-sm leading-relaxed max-w-2xl">{exp.description}</p>
+                                </div>
+                            ))}
+                        </CVSection>
+                    )}
+
+                    {/* Education */}
+                    {education.length > 0 && (
+                        <CVSection title="Academic Background" icon="school">
+                            {education.map((edu, i) => (
+                                <div key={i} className="relative">
+                                    <div className="absolute left-[-2.25rem] top-2 w-1.5 h-1.5 rounded-full bg-indigo-500 ring-4 ring-indigo-500/10"></div>
+                                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-2 mb-2">
+                                        <div>
+                                            <h3 className="text-xl font-headline font-bold text-slate-900">{edu.degree} in {edu.field}</h3>
+                                            <p className="text-md font-bold text-indigo-500 italic uppercase tracking-wider">{edu.institution}</p>
+                                        </div>
+                                        <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
+                                            {edu.start_date} — {edu.end_date}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </CVSection>
+                    )}
+                </div>
+
+                <div className="lg:col-span-4 space-y-12">
+                    {/* Skills */}
+                    {skills.length > 0 && (
+                        <CVSection title="Expertise" icon="verified">
+                            <div className="flex flex-wrap gap-2">
+                                {skills.map((skill, i) => (
+                                    <span key={i} className="px-3 py-2 bg-slate-50 border border-slate-100 rounded-lg text-[10px] font-black uppercase tracking-widest text-slate-700 hover:border-primary transition-colors cursor-default">
+                                        {skill}
+                                    </span>
+                                ))}
+                            </div>
+                        </CVSection>
+                    )}
+
+                    {/* Certifications */}
+                    {certifications.length > 0 && (
+                        <CVSection title="Credentials" icon="workspace_premium">
+                            <div className="space-y-4">
+                                {certifications.map((cert, i) => (
+                                    <div key={i} className="space-y-0.5">
+                                        <p className="text-sm font-bold text-slate-900">{cert.name}</p>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{cert.issuer}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </CVSection>
+                    )}
                 </div>
             </div>
 
-            {/* Summary */}
-            {cv.summary && (
-                <Section title="Professional Summary">
-                    <p className="text-sm text-gray-600 leading-relaxed">{cv.summary}</p>
-                </Section>
-            )}
-
-            {/* Experience */}
-            {exp.length > 0 && (
-                <Section title="Work Experience">
-                    <div className="space-y-4">
-                        {exp.map((e, i) => (
-                            <div key={i}>
-                                <div className="flex justify-between items-start flex-wrap gap-1">
-                                    <div>
-                                        <p className="font-semibold text-sm text-gray-800">{e.role || 'Role'}</p>
-                                        <p className="text-sm text-blue-600">{e.company || 'Company'}</p>
-                                    </div>
-                                    <p className="text-xs text-gray-400">
-                                        {e.start_date || ''}{e.start_date && (e.current || e.end_date) ? ' – ' : ''}
-                                        {e.current ? 'Present' : e.end_date || ''}
-                                    </p>
-                                </div>
-                                {e.description && (
-                                    <p className="text-xs text-gray-500 mt-1 leading-relaxed">{e.description}</p>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </Section>
-            )}
-
-            {/* Education */}
-            {edu.length > 0 && (
-                <Section title="Education">
-                    <div className="space-y-3">
-                        {edu.map((e, i) => (
-                            <div key={i} className="flex justify-between items-start flex-wrap gap-1">
-                                <div>
-                                    <p className="font-semibold text-sm text-gray-800">
-                                        {e.degree}{e.field ? ` in ${e.field}` : ''}
-                                    </p>
-                                    <p className="text-sm text-blue-600">{e.institution}</p>
-                                </div>
-                                <p className="text-xs text-gray-400">
-                                    {e.start_date || ''}{e.start_date && e.end_date ? ' – ' : ''}{e.end_date || ''}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-                </Section>
-            )}
-
-            {/* Skills */}
-            {skills.length > 0 && (
-                <Section title="Skills">
-                    <div className="flex flex-wrap gap-2">
-                        {skills.map((s) => (
-                            <span key={s} className="bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full font-medium">
-                                {s}
-                            </span>
-                        ))}
-                    </div>
-                </Section>
-            )}
-
-            {/* Certifications */}
-            {certs.length > 0 && (
-                <Section title="Certifications">
-                    <div className="space-y-1">
-                        {certs.map((c, i) => (
-                            <div key={i} className="flex justify-between text-sm">
-                                <span className="text-gray-700 font-medium">{c.name}</span>
-                                <span className="text-gray-400 text-xs">
-                                    {c.issuer}{c.year ? ` · ${c.year}` : ''}
-                                </span>
-                            </div>
-                        ))}
-                    </div>
-                </Section>
-            )}
-
-            {/* Languages */}
-            {langs.length > 0 && (
-                <Section title="Languages">
-                    <div className="flex flex-wrap gap-4">
-                        {langs.map((l, i) => (
-                            <div key={i} className="text-sm">
-                                <span className="font-medium text-gray-700">{l.language}</span>
-                                {l.proficiency && (
-                                    <span className="text-gray-400 text-xs ml-1">({l.proficiency})</span>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </Section>
-            )}
+            {/* Footer Sign-off */}
+            <footer className="mt-20 pt-10 border-t border-slate-100 flex items-center justify-between text-[9px] font-black uppercase tracking-[0.3em] text-slate-300">
+                <span>Verified Professional Manifest</span>
+                <span>Recruito ID: {cv.id?.slice(0, 8) || 'PENDING'}</span>
+            </footer>
         </div>
     );
 }

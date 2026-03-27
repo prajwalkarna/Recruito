@@ -12,8 +12,9 @@ const verifyToken = (req, res, next) => {
         req.user = decoded;
         next();
     } catch (err) {
-        res.status(400).json({ message: 'Invalid token' });
+        res.status(401).json({ message: 'Invalid token' });
     }
+
 };
 
 const checkRole = (roles) => {
