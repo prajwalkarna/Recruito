@@ -10,6 +10,8 @@ const {
     setDefaultCV,
 } = require('../controllers/cvController');
 
+const { validateId } = require('../middleware/validators');
+
 // All CV routes are protected — must be logged in as freelancer
 // GET    /api/cvs/me        → all CVs of logged-in user
 // GET    /api/cvs/:id       → single CV (owner only)
@@ -19,10 +21,10 @@ const {
 // DELETE /api/cvs/:id       → delete CV
 
 router.get('/me', verifyToken, checkRole(['freelancer', 'admin']), getMyCVs);
-router.get('/:id', verifyToken, getCVById);
+router.get('/:id', verifyToken, validateId, getCVById);
 router.post('/', verifyToken, checkRole(['freelancer']), createCV);
-router.put('/:id', verifyToken, checkRole(['freelancer']), updateCV);
-router.patch('/:id/set-default', verifyToken, checkRole(['freelancer']), setDefaultCV);
-router.delete('/:id', verifyToken, checkRole(['freelancer', 'admin']), deleteCV);
+router.put('/:id', verifyToken, checkRole(['freelancer']), validateId, updateCV);
+router.patch('/:id/set-default', verifyToken, checkRole(['freelancer']), validateId, setDefaultCV);
+router.delete('/:id', verifyToken, checkRole(['freelancer', 'admin']), validateId, deleteCV);
 
 module.exports = router;

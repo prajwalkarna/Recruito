@@ -2,10 +2,9 @@ const path = require('path');
 const fs = require('fs');
 const db = require('../db');
 
-// ============================================
 // UPLOAD PROFILE PICTURE
 // ============================================
-exports.uploadProfilePicture = async (req, res) => {
+const uploadProfilePicture = async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ error: 'No file uploaded' });
@@ -45,10 +44,9 @@ exports.uploadProfilePicture = async (req, res) => {
     }
 };
 
-// ============================================
 // UPLOAD CV
 // ============================================
-exports.uploadCVFile = async (req, res) => {
+const uploadCVFile = async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ error: 'No file uploaded' });
@@ -75,10 +73,9 @@ exports.uploadCVFile = async (req, res) => {
     }
 };
 
-// ============================================
 // UPLOAD PORTFOLIO FILE
 // ============================================
-exports.uploadPortfolioFile = async (req, res) => {
+const uploadPortfolioFile = async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ error: 'No file uploaded' });
@@ -114,10 +111,9 @@ exports.uploadPortfolioFile = async (req, res) => {
     }
 };
 
-// ============================================
 // DELETE FILE
 // ============================================
-exports.deleteFile = async (req, res) => {
+const deleteFile = async (req, res) => {
     try {
         const { type, id } = req.params;
         const userId = req.user.id;
@@ -154,4 +150,11 @@ exports.deleteFile = async (req, res) => {
         console.error(error);
         res.status(500).json({ error: 'Server error during deletion' });
     }
+};
+
+module.exports = {
+  uploadProfilePicture,
+  uploadCVFile,
+  uploadPortfolioFile,
+  deleteFile,
 };

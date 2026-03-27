@@ -1,23 +1,86 @@
+@import "tailwindcss";
+
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap");
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@layer base {
+  :root, [data-theme="dark"] {
+    --background: #0b0f10;
+    --surface: #161c1e;
+    --surface-container: #0f1416;
+    --surface-container-high: #1d2527;
+    --surface-variant: #2a3235;
+    --on-surface: #e2e8f0;
+    --on-surface-variant: #94a3b8;
+  }
+
+  [data-theme="light"] {
+    --background: #f8fafc;
+    --surface: #ffffff;
+    --surface-container: #f1f5f9;
+    --surface-container-high: #e2e8f0;
+    --surface-variant: #cbd5e1;
+    --on-surface: #0f172a;
+    --on-surface-variant: #475569;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--on-surface);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
 }
 
-body {
-  font-family: "Inter", sans-serif;
-  background: #0f0f1a;
-  color: #e0e0e0;
-  min-height: 100vh;
+@theme {
+  --color-primary: var(--accent-color, #47d6ff);
+  --color-primary-dark: var(--accent-color-dark, #0090b0);
+  --color-on-primary: #001f28;
+  
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-variant: var(--surface-variant);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  
+  --color-outline: #47464c;
+  
+  --font-headline: "Manrope", sans-serif;
+  --font-body: "Inter", sans-serif;
+
+  --radius-pill: 9999px;
+  --radius-card: 1.5rem;
+  --radius-section: 3rem;
 }
 
-a {
-  color: #7c6aef;
-  text-decoration: none;
+@utility glass-panel {
+  background-color: color-mix(in srgb, var(--surface), transparent 30%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--surface-variant);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
 }
 
-a:hover {
-  text-decoration: underline;
+@utility kinetic-gradient {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+}
+
+/* Stable Section Container */
+.section-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .section-container {
+    padding: 0 3rem;
+  }
 }

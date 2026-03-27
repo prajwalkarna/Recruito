@@ -17,8 +17,11 @@ CREATE TABLE IF NOT EXISTS users (
     is_active BOOLEAN DEFAULT TRUE,
     is_verified BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    reset_password_token VARCHAR(255),
+    reset_password_expires TIMESTAMP
 );
+
 
 -- ============================================
 -- 2. JOB CATEGORIES TABLE
@@ -68,6 +71,7 @@ CREATE TABLE IF NOT EXISTS cvs (
     education JSONB,
     certifications JSONB,
     languages JSONB,
+    file_url VARCHAR(500),
     is_default BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -134,10 +138,19 @@ CREATE TABLE IF NOT EXISTS messages (
 CREATE TABLE IF NOT EXISTS notifications (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    type VARCHAR(50) CHECK (type IN ('job_alert', 'application_status', 'new_message', 'job_expiring', 'profile_view')) NOT NULL,
+    type VARCHAR(50) CHECK (type IN (
+        'job_alert', 
+        'application_status', 
+        'application_received',
+        'status_change',
+        'new_message', 
+        'job_expiring', 
+        'profile_view',
+        'job_saved'
+    )) NOT NULL,
     title VARCHAR(255) NOT NULL,
     message TEXT NOT NULL,
-    related_id INTEGER,
+    link VARCHAR(500),
     is_read BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -148,7 +161,8 @@ CREATE TABLE IF NOT EXISTS notifications (
 CREATE TABLE IF NOT EXISTS user_settings (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE UNIQUE,
-    theme VARCHAR(20) CHECK (theme IN ('light', 'dark', 'system')) DEFAULT 'system',
+    theme VARCHAR(10) DEFAULT 'light',
+    accent_color VARCHAR(7) DEFAULT '#667eea',
     email_notifications BOOLEAN DEFAULT TRUE,
     push_notifications BOOLEAN DEFAULT TRUE,
     job_alert_notifications BOOLEAN DEFAULT TRUE,

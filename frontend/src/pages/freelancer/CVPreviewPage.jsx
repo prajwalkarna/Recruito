@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import CVPreview from '../../components/cv/CVPreview';
 import { fetchCVById } from '../../api/cvs';
+import FreelancerTopbar from '../../components/freelancer/FreelancerTopbar';
 
 export default function CVPreviewPage() {
     const { id } = useParams();
@@ -19,36 +20,47 @@ export default function CVPreviewPage() {
     }, [id]);
 
     if (loading) return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-            <p className="text-gray-400 animate-pulse text-sm">Loading CV preview...</p>
+        <div style={styles.page}>
+            <div style={styles.loadingCenter}>
+                <div style={styles.spinner} />
+                <span style={styles.loadingText}>Loading CV preview…</span>
+            </div>
         </div>
     );
 
     return (
-        <div className="min-h-screen bg-gray-50 py-10 px-4 print:bg-white print:py-0">
-            <div className="max-w-2xl mx-auto">
-                {/* Toolbar — hidden when printing */}
-                <div className="flex gap-3 mb-6 print:hidden">
-                    <button onClick={() => navigate('/freelancer/my-cvs')}
-                        className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 transition-colors">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                        My CVs
-                    </button>
-                    <div className="flex-1" />
-                    <button onClick={() => navigate(`/freelancer/edit-cv/${id}`)}
-                        className="border border-blue-300 text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors">
-                        Edit
-                    </button>
-                    <button onClick={() => window.print()}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                        🖨 Print / Save PDF
-                    </button>
+        <div style={styles.page}>
+            <div style={styles.container}>
+                {/* Hide topbar when printing */}
+                <div className="print:hidden">
+                    <FreelancerTopbar
+                        title="CV Preview"
+                        subtitle="Review your CV layout before sharing or downloading."
+                        rightAction={
+                            <div style={{ display: 'flex', gap: 10 }}>
+                                <button
+                                    onClick={() => navigate(`/freelancer/edit-cv/${id}`)}
+                                    style={styles.editBtn}
+                                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(59,130,246,0.12)'}
+                                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={() => window.print()}
+                                    style={styles.printBtn}
+                                    onMouseEnter={e => e.currentTarget.style.background = '#2563eb'}
+                                    onMouseLeave={e => e.currentTarget.style.background = '#3b82f6'}
+                                >
+                                    🖨 Print / Save PDF
+                                </button>
+                            </div>
+                        }
+                    />
                 </div>
 
                 {error && (
-                    <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">{error}</div>
+                    <div style={styles.errorAlert}>{error}</div>
                 )}
 
                 <CVPreview cv={cv} />
@@ -56,3 +68,35 @@ export default function CVPreviewPage() {
         </div>
     );
 }
+
+const styles = {
+    page: { minHeight: '100vh', background: '#0f0f1a', padding: '40px 16px' },
+    loadingCenter: {
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        minHeight: '100vh', gap: 16,
+    },
+    spinner: {
+        width: 32, height: 32,
+        border: '3px solid rgba(255,255,255,0.1)',
+        borderTop: '3px solid #3b82f6',
+        borderRadius: '50%',
+        animation: 'spin 0.8s linear infinite',
+    },
+    loadingText: { color: '#6b7280', fontSize: 14 },
+    container: { maxWidth: 800, margin: '0 auto' },
+    errorAlert: {
+        background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)',
+        color: '#f87171', padding: '11px 16px', borderRadius: 10, fontSize: 13, marginBottom: 16,
+    },
+    editBtn: {
+        padding: '9px 16px', background: 'transparent',
+        border: '1px solid rgba(59,130,246,0.35)', borderRadius: 10,
+        color: '#60a5fa', fontSize: 13, fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s',
+    },
+    printBtn: {
+        padding: '9px 16px', background: '#3b82f6', border: 'none',
+        borderRadius: 10, color: '#fff', fontSize: 13, fontWeight: 600,
+        cursor: 'pointer', transition: 'background 0.2s',
+    },
+};

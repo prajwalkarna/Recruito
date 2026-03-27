@@ -64,7 +64,7 @@ const getMyCVs = async (req, res) => {
 
     try {
         const result = await db.query(
-            `SELECT id, title, full_name, email, is_default, created_at, updated_at
+            `SELECT id, title, full_name, email, is_default, file_url, created_at, updated_at
              FROM cvs
              WHERE user_id = $1
              ORDER BY is_default DESC, updated_at DESC`,
